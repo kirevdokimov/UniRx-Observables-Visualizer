@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Admin\.Rider2017.3\system\resharper-host\local\Transient\ReSharperHost\v11\SolutionCaches\_UniRx-Observables-Visualizer.-1370509485.00" t="ExcludeRecursive" />
+    <e p="M:\Dev\UnityProjects\UniRx-Observables-Visualizer" t="IncludeRecursive">
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Stub.cs" t="Include" />
+      </e>
+      <e p="Library" t="ExcludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
+      <e p="UniRx-Observables-Visualizer.sln" t="IncludeFlat" />
+    </e>
+  </component>
+</project>
