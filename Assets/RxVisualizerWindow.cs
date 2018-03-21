@@ -1,5 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using DefaultNamespace;
+using UniRx;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
@@ -22,25 +27,11 @@ public class RxVisualizerWindow : EditorWindow {
 		
 		var window = GetWindow<RxVisualizerWindow>();
 		window.Show();
-		
-		
 	}
 
 	void OnGUI(){
-		
-//		GUI.DrawTexture(new Rect(x,y,10,10), t);
-//		GUI.DrawTexture(new Rect(x+10,y,10,20), black);
-		
-//		GUILayout.Label("Base Settings", EditorStyles.boldLabel);
-//		myString = EditorGUILayout.TextField("Text Field", myString);
-//
-//		groupEnabled = EditorGUILayout.BeginToggleGroup("Optional Settings", groupEnabled);
-//		myBool = EditorGUILayout.Toggle("Toggle", myBool);
 		x = EditorGUILayout.IntField("X", x);
 		y = EditorGUILayout.IntField("Y", y);
-//		EditorGUILayout.EndToggleGroup();
-		
-		//scrollPosition = GUI.BeginScrollView(ScrollViewRect, scrollPosition, ScrollViewContentRect);
 
 		var windowWidth = position.width;
 		var windowHeight = position.height;
@@ -57,6 +48,16 @@ public class RxVisualizerWindow : EditorWindow {
 		DrawLine(50,50,ScrollViewContentRect.width-100f);
 		GUI.EndScrollView();
 		
+	}
+
+	public static void OnNext(object obj, string name){
+		Debug.Log(name);
+	}
+	public static void OnError(Exception ex, string name){
+		Debug.Log(ex);
+	}
+	public static void OnCompleted(string name){
+		Debug.Log("cmpl "+name);
 	}
 
 	private void OnFocus(){
