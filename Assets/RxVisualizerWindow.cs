@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 
 public class RxVisualizerWindow : EditorWindow {
 
@@ -27,24 +28,35 @@ public class RxVisualizerWindow : EditorWindow {
 
 	void OnGUI(){
 		
-		GUI.DrawTexture(new Rect(x,y,10,10), t);
-		GUI.DrawTexture(new Rect(x+10,y,10,20), black);
+//		GUI.DrawTexture(new Rect(x,y,10,10), t);
+//		GUI.DrawTexture(new Rect(x+10,y,10,20), black);
 		
-		GUILayout.Label("Base Settings", EditorStyles.boldLabel);
-		myString = EditorGUILayout.TextField("Text Field", myString);
+//		GUILayout.Label("Base Settings", EditorStyles.boldLabel);
+//		myString = EditorGUILayout.TextField("Text Field", myString);
+//
+//		groupEnabled = EditorGUILayout.BeginToggleGroup("Optional Settings", groupEnabled);
+//		myBool = EditorGUILayout.Toggle("Toggle", myBool);
+		x = EditorGUILayout.IntField("X", x);
+		y = EditorGUILayout.IntField("Y", y);
+//		EditorGUILayout.EndToggleGroup();
+		
+		//scrollPosition = GUI.BeginScrollView(ScrollViewRect, scrollPosition, ScrollViewContentRect);
 
-		groupEnabled = EditorGUILayout.BeginToggleGroup("Optional Settings", groupEnabled);
-		myBool = EditorGUILayout.Toggle("Toggle", myBool);
-		x = EditorGUILayout.IntSlider("X", x, -50, 50);
-		y = EditorGUILayout.IntSlider("Y", y, -50, 50);
-		EditorGUILayout.EndToggleGroup();
+		var windowWidth = position.width;
+		var windowHeight = position.height;
+		var ScrollViewYAxisOffset = 100f;
+		var ScrollViewRect = new Rect(0,ScrollViewYAxisOffset,windowWidth,windowHeight-ScrollViewYAxisOffset);
+		var ScrollViewContentRect = new Rect(0,0,1000,500);
+		scrollPosition = GUI.BeginScrollView(ScrollViewRect, scrollPosition, ScrollViewContentRect);
 		
-		scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 500, 100), scrollPosition, new Rect(0, 0, 220*x, 200));
-		GUI.Button(new Rect(0, 0, 100, 20), "Top-left");
-		GUI.Button(new Rect(120, 0, 100, 20), "Top-right");
-		GUI.Button(new Rect(0, 180, 100, 20), "Bottom-left");
-		GUI.Button(new Rect(120, 180, 100, 20), "Bottom-right");
+		GUI.Button(new Rect(0, 0, 10, 10), "Top-left");
+		GUI.Button(new Rect(ScrollViewContentRect.width-10, 0, 10, 10), "Top-right");
+		GUI.Button(new Rect(0, ScrollViewContentRect.height-10, 10, 10), "Bottom-left");
+		GUI.Button(new Rect(ScrollViewContentRect.width-10, ScrollViewContentRect.height-10, 10, 10), "Bottom-right");
+		
+		DrawLine(50,50,ScrollViewContentRect.width-100f);
 		GUI.EndScrollView();
+		
 	}
 
 	private void OnFocus(){
@@ -52,4 +64,10 @@ public class RxVisualizerWindow : EditorWindow {
 		t = (Texture) EditorGUIUtility.Load ("Assets/Resources/greenCircle.png");
 		black = (Texture) EditorGUIUtility.Load ("Assets/Resources/black.png");
 	}
+
+	private void DrawLine(float x, float y, float length){
+		GUI.DrawTexture(new Rect(x,y,length,1f), black );
+	}
+
+
 }
