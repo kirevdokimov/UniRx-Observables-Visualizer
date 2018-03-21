@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace;
 using UniRx;
@@ -9,6 +10,7 @@ public class TestScript : MonoBehaviour{
 
 	
 	private void Start(){
-		Observable.ReturnUnit().Visualize("Pep");
+		//Observable.Interval(TimeSpan.FromSeconds(1f)).Visualize("pep");
+		this.UpdateAsObservable().Visualize("l").Take(500);
 	}
 }
