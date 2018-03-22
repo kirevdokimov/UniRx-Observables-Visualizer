@@ -10,7 +10,8 @@ public class TestScript : MonoBehaviour{
 
 	
 	private void Start(){
-		//Observable.Interval(TimeSpan.FromSeconds(1f)).Visualize("pep");
-		this.UpdateAsObservable().Visualize("l").Take(500);
+		Observable.Interval(TimeSpan.FromSeconds(1f)).Visualize("Alpha");
+		Observable.Interval(TimeSpan.FromSeconds(1f)).Delay(TimeSpan.FromSeconds(.25f)).Visualize("Beta");
+		Observable.ReturnUnit().Delay(TimeSpan.FromSeconds(4.28f)).Visualize("Echo");
 	}
 }

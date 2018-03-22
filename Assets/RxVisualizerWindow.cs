@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DefaultNamespace;
+using RxVisualizer;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -36,38 +37,46 @@ public class RxVisualizerWindow : EditorWindow {
 		y = EditorGUILayout.IntField("Y", y);
 		timeToLength = EditorGUILayout.FloatField("Len", timeToLength);
 
+		DrawScrollView(DrawScrollViewContent);
+	}
+
+	void DrawScrollViewContent(Rect scrollViewContentRect){
+		GUI.Button(new Rect(0, 0, 10, 10), "Top-left");
+		GUI.Button(new Rect(scrollViewContentRect.width-10, 0, 10, 10), "Top-right");
+		GUI.Button(new Rect(0, scrollViewContentRect.height-10, 10, 10), "Bottom-left");
+		GUI.Button(new Rect(scrollViewContentRect.width-10, scrollViewContentRect.height-10, 10, 10), "Bottom-right");
+		
+		foreach (var sequenceLine in lines.Values){
+			sequenceLine.OnGUI(timeToLength);
+		}
+	}
+
+	void DrawScrollView(Action<Rect> content){
 		var windowWidth = position.width;
 		var windowHeight = position.height;
 		var ScrollViewYAxisOffset = 100f;
 		var ScrollViewRect = new Rect(0,ScrollViewYAxisOffset,windowWidth,windowHeight-ScrollViewYAxisOffset);
 		var ScrollViewContentRect = new Rect(0,0,1000,500);
 		scrollPosition = GUI.BeginScrollView(ScrollViewRect, scrollPosition, ScrollViewContentRect);
-		
-		GUI.Button(new Rect(0, 0, 10, 10), "Top-left");
-		GUI.Button(new Rect(ScrollViewContentRect.width-10, 0, 10, 10), "Top-right");
-		GUI.Button(new Rect(0, ScrollViewContentRect.height-10, 10, 10), "Bottom-left");
-		GUI.Button(new Rect(ScrollViewContentRect.width-10, ScrollViewContentRect.height-10, 10, 10), "Bottom-right");
-		
-		DrawLine(50,50,ScrollViewContentRect.width-100f);
-		
-		foreach (var point in points){
-			DrawPoint(50,50,point);
-			Repaint();
-		}
+
+		content(ScrollViewContentRect);
 		
 		GUI.EndScrollView();
-		
 	}
 
-	private static List<Point> points = new List<Point>();
+	void OnInspectorUpdate(){Repaint();}
 
-	public struct Point{
-		public float time;
-	}
 
 	public static void OnNext(object obj, string name){
-		Debug.Log(name);
-		points.Add(new Point{time = Time.time});
+		if (IsUnknownName(name)){
+			var layer = lines.Count;
+			lines.Add(name,new SequenceLine(name,layer));
+			Debug.Log("New Line and point to "+name);
+			lines[name].AddPoint(new Point{time = Time.time});
+		} else {
+			Debug.Log("New point to "+name);
+			lines[name].AddPoint(new Point{time = Time.time});
+		}
 	}
 	public static void OnError(Exception ex, string name){
 		Debug.Log(ex);
@@ -76,18 +85,18 @@ public class RxVisualizerWindow : EditorWindow {
 		Debug.Log("cmpl "+name);
 	}
 
+	public static bool IsUnknownName(string name){
+		return !lines.ContainsKey(name);
+	}
+
+	private static Dictionary<string, SequenceLine> lines = new Dictionary<string, SequenceLine>();
+
 	private void OnFocus(){
 		Debug.Log("Focus");
 		t = (Texture) EditorGUIUtility.Load ("Assets/Resources/greenCircle.png");
 		black = (Texture) EditorGUIUtility.Load ("Assets/Resources/black.png");
-	}
-
-	private void DrawLine(float x, float y, float length){
-		GUI.DrawTexture(new Rect(x,y,length,1f), black );
-	}
-
-	private void DrawPoint(float lineStartX, float lineStartY, Point p){
-		GUI.DrawTexture(new Rect(lineStartX + p.time*timeToLength -5,lineStartY -5,10,10),t );
+		SequenceLine.lineTexture = black;
+		SequenceLine.pointTexture = t;
 	}
 
 
