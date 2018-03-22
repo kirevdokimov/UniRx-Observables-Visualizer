@@ -68,35 +68,42 @@ public class RxVisualizerWindow : EditorWindow {
 
 
 	public static void OnNext(object obj, string name){
+		AddPoint(name, Point.PointType.next);
+	}
+	public static void OnError(Exception ex, string name){
+		AddPoint(name, Point.PointType.error);
+	}
+	public static void OnCompleted(string name){
+		AddPoint(name, Point.PointType.completed);
+	}
+
+	private static bool IsUnknownName(string name){
+		return !lines.ContainsKey(name);
+	}
+
+	private static void AddPoint(string name, Point.PointType type){
 		if (IsUnknownName(name)){
 			var layer = lines.Count;
 			lines.Add(name,new SequenceLine(name,layer));
 			Debug.Log("New Line and point to "+name);
-			lines[name].AddPoint(new Point{time = Time.time});
+			lines[name].AddPoint(new Point{time = Time.time, type = type});
 		} else {
 			Debug.Log("New point to "+name);
-			lines[name].AddPoint(new Point{time = Time.time});
+			lines[name].AddPoint(new Point{time = Time.time, type = type});
 		}
-	}
-	public static void OnError(Exception ex, string name){
-		Debug.Log(ex);
-	}
-	public static void OnCompleted(string name){
-		Debug.Log("cmpl "+name);
-	}
-
-	public static bool IsUnknownName(string name){
-		return !lines.ContainsKey(name);
 	}
 
 	private static Dictionary<string, SequenceLine> lines = new Dictionary<string, SequenceLine>();
 
 	private void OnFocus(){
 		Debug.Log("Focus");
-		t = (Texture) EditorGUIUtility.Load ("Assets/Resources/greenCircle.png");
-		black = (Texture) EditorGUIUtility.Load ("Assets/Resources/black.png");
-		SequenceLine.lineTexture = black;
-		SequenceLine.pointTexture = t;
+	}
+
+	public static class VisualizerTextures{
+		public static Texture line = (Texture) EditorGUIUtility.Load ("Assets/Resources/black.png");
+		public static Texture point = (Texture) EditorGUIUtility.Load ("Assets/Resources/greenCircle.png");
+		public static Texture completedIcon = (Texture) EditorGUIUtility.Load ("Assets/Resources/completedIcon.png");
+		public static Texture errorIcon = (Texture) EditorGUIUtility.Load ("Assets/Resources/errorIcon.png");
 	}
 
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Texture = RxVisualizerWindow.VisualizerTextures;
 
 namespace RxVisualizer{
     public class SequenceLine{
@@ -8,8 +9,6 @@ namespace RxVisualizer{
         public Vector2 origin;
         public Vector2 size = new Vector2(500,1);
         private List<Point> points;
-        public static Texture lineTexture;
-        public static Texture pointTexture;
 
         public int layer;
 
@@ -21,11 +20,13 @@ namespace RxVisualizer{
         }
 
         public void OnGUI(float timeToLength){
-            GUI.DrawTexture(new Rect(origin,size), lineTexture );
+            GUI.DrawTexture(new Rect(origin,size), Texture.line );
 
             foreach (var point in points){
-                var pointRect = new Rect(origin.x + point.time * timeToLength - 5, origin.y - 5, 10, 10);
-                GUI.DrawTexture(pointRect,pointTexture );
+                UnityEngine.Texture tx = GetTextureByType(point.type);
+                var pointRect = new Rect(origin.x + point.time * timeToLength - tx.width/2, origin.y - tx.height/2, tx.width, tx.height);
+                
+                GUI.DrawTexture(pointRect,tx);
                 
                 // Срабатывает при наведении на rect
                 if (pointRect.Contains(Event.current.mousePosition)){
@@ -41,6 +42,15 @@ namespace RxVisualizer{
 
         public void AddPoint(Point p){
             points.Add(p);
+        }
+
+        public UnityEngine.Texture GetTextureByType(Point.PointType type){
+            switch (type){
+                case Point.PointType.error : return Texture.errorIcon;
+                case Point.PointType.completed : return Texture.completedIcon;
+                case Point.PointType.next :
+                default : return Texture.point;
+            }
         }
     }
 }
