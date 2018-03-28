@@ -8,13 +8,13 @@ namespace RxVisualizer{
         public string name;
         public Vector2 origin;
         public Vector2 size = new Vector2(500,1);
-        private List<Point> points;
+        private List<Item> points;
 
         public int layer;
 
         public SequenceLine(string name, int layer){
             this.name = name;
-            points = new List<Point>();
+            points = new List<Item>();
             this.layer = layer;
             origin.y = 50 + layer * 70f;
         }
@@ -40,15 +40,15 @@ namespace RxVisualizer{
             GUI.Label(rt, lineLabel);
         }
 
-        public void AddPoint(Point p){
+        public void AddPoint(Item p){
             points.Add(p);
         }
 
-        public UnityEngine.Texture GetTextureByType(Point.PointType type){
+        public UnityEngine.Texture GetTextureByType(Item.Type type){
             switch (type){
-                case Point.PointType.error : return Texture.errorIcon;
-                case Point.PointType.completed : return Texture.completedIcon;
-                case Point.PointType.next :
+                case Item.Type.error : return Texture.errorIcon;
+                case Item.Type.completed : return Texture.completedIcon;
+                case Item.Type.next :
                 default : return Texture.point;
             }
         }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using RxVisualizer;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
+using RxVisualizer;
 
 public class TestScript : MonoBehaviour{
 

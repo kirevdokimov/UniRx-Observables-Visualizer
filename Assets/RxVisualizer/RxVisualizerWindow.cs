@@ -36,6 +36,23 @@ public class RxVisualizerWindow : EditorWindow {
 		}
 
 		DrawGrid();
+		
+		// TODO Добавить порядок для контейнеров
+		int layer = -1;
+		foreach (var container in VisualizerItemHandler.Containers){
+			layer++;
+			var items = container.GetItems();
+			foreach (var item in items){
+				DrawItem(item,layer);
+				Debug.Log("Render");
+			}
+		}
+	}
+
+	private void DrawItem(Item item, int layer){
+		var tx = VisualizerTextures.point;
+		var pointRect = new Rect(0 + item.time * slider - tx.width/2, 100 + layer * 50 - tx.height/2, tx.width, tx.height);   
+		GUI.DrawTexture(pointRect,tx);
 	}
 
 	private GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
@@ -57,6 +74,18 @@ public class RxVisualizerWindow : EditorWindow {
 		return new Rect(r.position.x + left,r.position.y + top, r.size.x - left -right,r.size.y - top - bottom);
 	}
 
+	void OnInspectorUpdate(){Repaint();}
+
+	private void OnFocus(){
+		Debug.Log("Focus");
+	}
+
+	public static class VisualizerTextures{
+		public static Texture line = (Texture) EditorGUIUtility.Load ("Assets/Resources/black.png");
+		public static Texture point = (Texture) EditorGUIUtility.Load ("Assets/Resources/greenCircle.png");
+		public static Texture completedIcon = (Texture) EditorGUIUtility.Load ("Assets/Resources/completedIcon.png");
+		public static Texture errorIcon = (Texture) EditorGUIUtility.Load ("Assets/Resources/errorIcon.png");
+	}
 
 //	void DrawScrollViewContent(Rect scrollViewContentRect){
 //		GUI.Button(new Rect(0, 0, 10, 10), "Top-left");
@@ -89,51 +118,4 @@ public class RxVisualizerWindow : EditorWindow {
 //		
 //		GUI.EndScrollView();
 //	}
-
-	void OnInspectorUpdate(){Repaint();}
-
-	public IObserver<string> observer;
-
-	public static readonly IPointHandler handler = new PointHandler();
-
-	public static void OnNext(object obj, string name){
-		AddPoint(name, Point.PointType.next);
-	}
-	public static void OnError(Exception ex, string name){
-		AddPoint(name, Point.PointType.error);
-	}
-	public static void OnCompleted(string name){
-		AddPoint(name, Point.PointType.completed);
-	}
-
-	private static bool IsUnknownName(string name){
-		return !lines.ContainsKey(name);
-	}
-
-	private static void AddPoint(string name, Point.PointType type){
-		if (IsUnknownName(name)){
-			var layer = lines.Count;
-			lines.Add(name,new SequenceLine(name,layer));
-			Debug.Log("New Line and point to "+name);
-			lines[name].AddPoint(new Point{time = Time.time, type = type});
-		} else {
-			Debug.Log("New point to "+name);
-			lines[name].AddPoint(new Point{time = Time.time, type = type});
-		}
-	}
-
-	private static Dictionary<string, SequenceLine> lines = new Dictionary<string, SequenceLine>();
-
-	private void OnFocus(){
-		Debug.Log("Focus");
-	}
-
-	public static class VisualizerTextures{
-		public static Texture line = (Texture) EditorGUIUtility.Load ("Assets/Resources/black.png");
-		public static Texture point = (Texture) EditorGUIUtility.Load ("Assets/Resources/greenCircle.png");
-		public static Texture completedIcon = (Texture) EditorGUIUtility.Load ("Assets/Resources/completedIcon.png");
-		public static Texture errorIcon = (Texture) EditorGUIUtility.Load ("Assets/Resources/errorIcon.png");
-	}
-
-
 }
