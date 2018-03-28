@@ -1,7 +1,7 @@
 ﻿using System;
 using UniRx;
 
-namespace DefaultNamespace{
+namespace RxVisualizer{
     public static class Visualizer{
 
         public static IObservable<T> Visualize<T>(this IObservable<T> obs,string name){

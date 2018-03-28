@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using DefaultNamespace;
 using RxVisualizer;
-using UniRx;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
 
 public class RxVisualizerWindow : EditorWindow {
 
@@ -17,7 +11,8 @@ public class RxVisualizerWindow : EditorWindow {
 	bool myBool = true;
 	int x = 5;
 	int y = 5;
-
+	private Vector2Int size;
+	
 	private static Texture t;
 	private static Texture black;
 
@@ -31,38 +26,61 @@ public class RxVisualizerWindow : EditorWindow {
 	}
 
 	public float timeToLength = 50; // 50 pixels per second
+	
 
 	void OnGUI(){
-		x = EditorGUILayout.IntField("X", x);
-		y = EditorGUILayout.IntField("Y", y);
-		timeToLength = EditorGUILayout.FloatField("Len", timeToLength);
-
-		DrawScrollView(DrawScrollViewContent);
-	}
-
-	void DrawScrollViewContent(Rect scrollViewContentRect){
-		GUI.Button(new Rect(0, 0, 10, 10), "Top-left");
-		GUI.Button(new Rect(scrollViewContentRect.width-10, 0, 10, 10), "Top-right");
-		GUI.Button(new Rect(0, scrollViewContentRect.height-10, 10, 10), "Bottom-left");
-		GUI.Button(new Rect(scrollViewContentRect.width-10, scrollViewContentRect.height-10, 10, 10), "Bottom-right");
-		
-		foreach (var sequenceLine in lines.Values){
-			sequenceLine.OnGUI(timeToLength);
-		}
-	}
-
-	void DrawScrollView(Action<Rect> content){
 		var windowWidth = position.width;
 		var windowHeight = position.height;
-		var ScrollViewYAxisOffset = 100f;
-		var ScrollViewRect = new Rect(0,ScrollViewYAxisOffset,windowWidth,windowHeight-ScrollViewYAxisOffset);
-		var ScrollViewContentRect = new Rect(0,0,1000,500);
-		scrollPosition = GUI.BeginScrollView(ScrollViewRect, scrollPosition, ScrollViewContentRect);
-
-		content(ScrollViewContentRect);
-		
-		GUI.EndScrollView();
+		var gridRect = new Rect(0, 0, windowWidth, windowHeight);
+		DrawGrid(GetRectWithMargin(gridRect,100,0,0,0));
 	}
+
+	private GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
+		LargeLineColor = new Color(.35f,.35f,.35f,1f),
+		SmallLineColor = new Color(.3f,.3f,.3f,1f),
+		Subdivisions = 5
+	};
+
+	void DrawGrid(Rect rect){
+		GUIGrid.Draw(rect,gridConfig);
+	}
+
+	public Rect GetRectWithMargin(Rect r, int top, int bottom, int left, int right){
+		return new Rect(r.position.x + left,r.position.y + top, r.size.x - left -right,r.size.y - top - bottom);
+	}
+
+
+//	void DrawScrollViewContent(Rect scrollViewContentRect){
+//		GUI.Button(new Rect(0, 0, 10, 10), "Top-left");
+//		GUI.Button(new Rect(scrollViewContentRect.width-10, 0, 10, 10), "Top-right");
+//		GUI.Button(new Rect(0, scrollViewContentRect.height-10, 10, 10), "Bottom-left");
+//		GUI.Button(new Rect(scrollViewContentRect.width-10, scrollViewContentRect.height-10, 10, 10), "Bottom-right");
+//		
+//		Rect rect = new Rect(0, 0, 800, 600);
+//
+//		//Background
+//		var _bgStyle = new GUIStyle();
+//		//_bgStyle.normal.background = new Color(.36f, .36f, .36f);
+//		GUI.Box(rect,"", _bgStyle);
+//
+//		
+//		foreach (var sequenceLine in lines.Values){
+//			sequenceLine.OnGUI(timeToLength);
+//		}
+//	}
+//
+//	void DrawScrollView(Action<Rect> content){
+//		var windowWidth = position.width;
+//		var windowHeight = position.height;
+//		var ScrollViewYAxisOffset = 100f;
+//		var ScrollViewRect = new Rect(0,ScrollViewYAxisOffset,windowWidth,windowHeight-ScrollViewYAxisOffset);
+//		var ScrollViewContentRect = new Rect(0,0,1000,500);
+//		scrollPosition = GUI.BeginScrollView(ScrollViewRect, scrollPosition, ScrollViewContentRect);
+//
+//		content(ScrollViewContentRect);
+//		
+//		GUI.EndScrollView();
+//	}
 
 	void OnInspectorUpdate(){Repaint();}
 
