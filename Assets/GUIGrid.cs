@@ -8,26 +8,52 @@ public static class GUIGrid{
         public Color SmallLineColor;
         public Color LargeLineColor;
 
-        public Vector2 SmallTileSize{
-            get{ 
-                _smallTileSize.x = Mathf.Max(5, _smallTileSize.x);
-                _smallTileSize.y = Mathf.Max(5, _smallTileSize.y);
-                return _smallTileSize;
-                
-            }
+        public Vector2Int UnitSize{
             set{
-                _smallTileSize.x = Mathf.Max(5, value.x);
-                _smallTileSize.y = Mathf.Max(5, value.y);
+                UnitWidth = value.x;
+                UnitHeight = value.y;
+            }
+        }
+        public Vector2Int LargeUnitSize{
+            set{
+                LargeUnitWidth = value.x;
+                LargeUnitHeight = value.y;
             }
         }
 
-        public float Subdivisions{
-            set{ LargeTileSize = SmallTileSize * Mathf.Max(1,value); }
+        public int Subdivisions{
+            set{
+                LargeUnitWidth = UnitWidth * value;
+                LargeUnitHeight = UnitHeight * value;
+            }
         }
 
-        public Vector2 LargeTileSize{ get; private set; }
+        public int UnitWidth{
+            get{ return _uw; }
+            set{ _uw = Mathf.Max(5, value); }
+        }
 
-        private Vector2 _smallTileSize;
+        public int UnitHeight{
+            get{ return _uh; }
+            set{ _uh = Mathf.Max(5, value); }
+        }
+
+        public int LargeUnitWidth{
+            get{ return _luw; }
+            set{ _luw = Mathf.Max(5, value); }
+        }
+
+        public int LargeUnitHeight{
+            get{ return _luh; }
+            set{ _luh = Mathf.Max(5, value); }
+        }
+
+        private int _uw;
+        private int _uh;
+        
+        private int _luw;
+        private int _luh;
+
     }
 
     static Material lineMaterial;
@@ -50,7 +76,7 @@ public static class GUIGrid{
     private static readonly DrawConfig DefaultConfig = new DrawConfig(){
         SmallLineColor = Color.blue,
         LargeLineColor = Color.red,
-        SmallTileSize = new Vector2(5, 5),
+        UnitSize = new Vector2Int(5, 5),
         Subdivisions = 5
     };
 
@@ -71,18 +97,18 @@ public static class GUIGrid{
         
         
         // Vertical lines
-        for (float x = 0; x < rect.width; x += config.SmallTileSize.x){
+        for (var x = 0; x < rect.width; x += config.UnitWidth){
             GL.Begin(GL.LINES);
-            GL.Color((x % config.LargeTileSize.x == 0) ? config.LargeLineColor : config.SmallLineColor);
+            GL.Color((x % config.LargeUnitWidth == 0) ? config.LargeLineColor : config.SmallLineColor);
             GL.Vertex3(rect.x + x, rect.y, 0);
             GL.Vertex3(rect.x + x, rect.y + rect.height, 0);
             GL.End();
         }
 
         // Horizontal lines
-        for (float y = 0; y < rect.height; y += config.SmallTileSize.y){
+        for (var y = 0; y < rect.height; y += config.UnitHeight){
             GL.Begin(GL.LINES);
-            GL.Color((y % config.LargeTileSize.y == 0) ? config.LargeLineColor : config.SmallLineColor);
+            GL.Color((y % config.LargeUnitHeight == 0) ? config.LargeLineColor : config.SmallLineColor);
             GL.Vertex3(rect.x, rect.y + y, 0);
             GL.Vertex3(rect.x + rect.width, rect.y + y, 0);
             GL.End();

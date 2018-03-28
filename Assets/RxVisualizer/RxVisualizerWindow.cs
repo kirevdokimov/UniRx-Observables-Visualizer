@@ -26,9 +26,16 @@ public class RxVisualizerWindow : EditorWindow {
 	}
 
 	public float timeToLength = 50; // 50 pixels per second
-	
+
+	public int slider;
 
 	void OnGUI(){
+		EditorGUI.BeginChangeCheck();
+		slider = EditorGUILayout.IntSlider("Slider", slider, 5, 50);
+		if (EditorGUI.EndChangeCheck()){
+			gridConfig.UnitWidth = slider;
+		}
+
 		var windowWidth = position.width;
 		var windowHeight = position.height;
 		var gridRect = new Rect(0, 0, windowWidth, windowHeight);
@@ -38,6 +45,7 @@ public class RxVisualizerWindow : EditorWindow {
 	private GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
 		LargeLineColor = new Color(.35f,.35f,.35f,1f),
 		SmallLineColor = new Color(.3f,.3f,.3f,1f),
+		UnitSize = new Vector2Int(5,5),
 		Subdivisions = 5
 	};
 
