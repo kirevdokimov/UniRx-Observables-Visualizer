@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RxVisualizer;
+using UniRx;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,8 +26,6 @@ public class RxVisualizerWindow : EditorWindow {
 		window.Show();
 	}
 
-	public float timeToLength = 50; // 50 pixels per second
-
 	public int slider;
 
 	void OnGUI(){
@@ -36,10 +35,7 @@ public class RxVisualizerWindow : EditorWindow {
 			gridConfig.UnitWidth = slider;
 		}
 
-		var windowWidth = position.width;
-		var windowHeight = position.height;
-		var gridRect = new Rect(0, 0, windowWidth, windowHeight);
-		DrawGrid(GetRectWithMargin(gridRect,100,0,0,0));
+		DrawGrid();
 	}
 
 	private GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
@@ -49,11 +45,15 @@ public class RxVisualizerWindow : EditorWindow {
 		Subdivisions = 5
 	};
 
-	void DrawGrid(Rect rect){
-		GUIGrid.Draw(rect,gridConfig);
+	void DrawGrid(){
+		var windowWidth = position.width;
+		var windowHeight = position.height;
+		var gridRect = new Rect(0, 0, windowWidth, windowHeight);
+		var margRect = GetRectWithMargin(gridRect, 100, 0, 0, 0);
+		GUIGrid.Draw(margRect,gridConfig);
 	}
 
-	public Rect GetRectWithMargin(Rect r, int top, int bottom, int left, int right){
+	private Rect GetRectWithMargin(Rect r, int top, int bottom, int left, int right){
 		return new Rect(r.position.x + left,r.position.y + top, r.size.x - left -right,r.size.y - top - bottom);
 	}
 
@@ -92,6 +92,9 @@ public class RxVisualizerWindow : EditorWindow {
 
 	void OnInspectorUpdate(){Repaint();}
 
+	public IObserver<string> observer;
+
+	public static readonly IPointHandler handler = new PointHandler();
 
 	public static void OnNext(object obj, string name){
 		AddPoint(name, Point.PointType.next);
