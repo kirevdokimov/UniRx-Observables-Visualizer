@@ -35,6 +35,10 @@ public class RxVisualizerWindow : EditorWindow {
 			gridConfig.UnitWidth = slider;
 		}
 
+		if (GUILayout.Button("Clear")){
+			VisualizerItemHandler.Clear();
+		}
+
 		DrawGrid();
 		
 		// TODO Добавить порядок для контейнеров

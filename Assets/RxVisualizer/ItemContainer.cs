@@ -15,5 +15,9 @@ namespace RxVisualizer{
         public List<Item> GetItems(){
             return items;
         }
+
+        public void Clear(){
+            items.Clear();
+        }
     }
 }

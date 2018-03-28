@@ -49,6 +49,12 @@ namespace RxVisualizer{
             container.Add(name,cnt);
             return cnt;
         }
-        
+
+        public static void Clear(){
+            foreach (var container in Containers){
+                container.Clear();
+            }
+        }
+
     }
 }
