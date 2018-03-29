@@ -1,31 +1,38 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions.Comparers;
 
 namespace RxVisualizer{
     public static class Drawer{
-
+        
         private static Texture2D point = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/greenCircle.png");
 
-        public static Rect DrawItem(Item item, int layer, int zoom){
-            var pointRect = new Rect(0 + gridConfig.LargeUnitWidth * item.time - point.width/2, 100 + layer * 50 - point.height/2, point.width, point.height);   
+        public static Rect DrawItem(Item item, int layer){
+            var origin = new Vector2(0,100);
+            var layerOffset = 50;
+            // Тут важна зависимость от UnitWidth, чтобы небыло разных мер для отрисовки сетки и отрисовки меток.
+            var unitsPerTime = gridConfig.UnitWidth; // количество расстояния в юнитах для одной секунды времени
+            
+            var pointRect = new Rect(
+                origin.x + unitsPerTime * item.time - point.width/2,
+                origin.y + layer * layerOffset - point.height/2,
+                point.width,
+                point.height);   
             GUI.DrawTexture(pointRect,point);
             return pointRect;
         }
 
         private static GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
             LargeLineColor = new Color(.55f,.55f,.55f,1f),
-            //LargeLineColor = Color.blue,
             SmallLineColor = new Color(.3f,.3f,.3f,1f),
-            //UnitHeight = 16,
             UnitWidth = 16,
-            LargeWidthRatio = 5,
-            LargeHeightRatio = 5
+            LargeWidthRatio = 5
         };
-
-        public static void SetZoom(int zoom){
+        
+        public static void SetZoom(int value){
             var ratio = gridConfig.LargeUnitWidth / gridConfig.UnitWidth;
-            gridConfig.UnitWidth = zoom;
-            gridConfig.LargeUnitWidth = ratio * zoom;
+            gridConfig.UnitWidth = value;
+            gridConfig.LargeUnitWidth = ratio * value;
         }
 
         public static void DrawGrid(Rect rect){
