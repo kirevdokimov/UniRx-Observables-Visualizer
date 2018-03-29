@@ -46,7 +46,10 @@ namespace RxVisualizer{
 				layer++;
 				var items = container.GetItems();
 				foreach (var item in items){
-					Drawer.DrawItem(item, layer, zoomSlider);
+					var rect = Drawer.DrawItem(item, layer, zoomSlider);
+					if (rect.Contains(Event.current.mousePosition)){
+						GUI.Box(new Rect(Event.current.mousePosition,new Vector2(100,50)), "Hello");
+					}
 				}
 			}
 		}

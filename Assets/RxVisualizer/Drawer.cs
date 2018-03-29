@@ -6,9 +6,10 @@ namespace RxVisualizer{
 
         private static Texture2D point = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/greenCircle.png");
 
-        public static void DrawItem(Item item, int layer, int zoom){
+        public static Rect DrawItem(Item item, int layer, int zoom){
             var pointRect = new Rect(0 + item.time * zoom - point.width/2, 100 + layer * 50 - point.height/2, point.width, point.height);   
             GUI.DrawTexture(pointRect,point);
+            return pointRect;
         }
 
         private static GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
