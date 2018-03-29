@@ -34,7 +34,7 @@ namespace RxVisualizer{
         public static void Handle(string name){
             var item = new Item(){
                 data = "OnCompleted",
-                type = Item.Type.error,
+                type = Item.Type.completed,
                 time = Time.time
             };
             

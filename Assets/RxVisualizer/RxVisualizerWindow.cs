@@ -18,7 +18,7 @@ namespace RxVisualizer{
 			
 		}
 
-		public int zoomSlider = 16;
+		public int zoomSlider = 50;
 
 		void OnGUI(){
 
@@ -47,7 +47,7 @@ namespace RxVisualizer{
 				layer++;
 				var items = container.GetItems();
 				foreach (var item in items){
-					var rect = Drawer.DrawItem(item, layer);
+					var rect = Drawer.DrawItem(item, layer,item.data);
 					if (rect.Contains(Event.current.mousePosition)){
 						GUI.Box(new Rect(Event.current.mousePosition,new Vector2(100,50)), "Hello");
 					}

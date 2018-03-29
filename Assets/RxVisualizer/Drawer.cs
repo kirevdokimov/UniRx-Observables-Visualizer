@@ -1,33 +1,65 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Assertions.Comparers;
+using Random = UnityEngine.Random;
 
 namespace RxVisualizer{
     public static class Drawer{
-        private static Texture2D point = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/greenMark.png");
+        private static Texture2D[] mark = {
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/greenMark.png"),//0
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/redMark.png"),//1
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/blueMark.png"),//2
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/orangeMark.png"),//3
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/completedMark.png"),//4
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/errorMark.png"),//5
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/ohHiMark.png")//6
+        };
         
         public static Rect gridRect;
 
+        public static Rect DrawItem(Item item, int layer, string text){
+            var rect = DrawItem(item, layer);
+            
+            if(item.type == Item.Type.next)
+                GUI.Label(rect,text,new GUIStyle(){
+                    normal = new GUIStyleState{
+                        textColor = Color.black
+                    },
+                    alignment = TextAnchor.MiddleCenter
+                });
+            
+            return rect;
+        }
+
         public static Rect DrawItem(Item item, int layer){
+            Texture2D drawmark;
+            
+            switch (item.type){
+                case Item.Type.next : drawmark = mark[0]; break;
+                case Item.Type.completed : drawmark = mark[4]; break;
+                case Item.Type.error : drawmark = mark[5]; break;
+                default : drawmark = mark[6]; break;
+            }
+            
+            //var point = 
             var origin = gridRect.position;
             var layerOffset = 50;
             // Тут важна зависимость от UnitWidth, чтобы небыло разных мер для отрисовки сетки и отрисовки меток.
             var unitsPerTime = gridConfig.UnitWidth; // количество расстояния в юнитах для одной секунды времени
             
             var pointRect = new Rect(
-                origin.x + unitsPerTime * item.time - point.width/2,
-                origin.y + layer * layerOffset - point.height/2,
-                point.width,
-                point.height);   
-            GUI.DrawTexture(pointRect,point);
+                origin.x + unitsPerTime * item.time - drawmark.width/2,
+                origin.y + layer * layerOffset - drawmark.height/2,
+                drawmark.width,
+                drawmark.height);   
+            GUI.DrawTexture(pointRect,drawmark);
             return pointRect;
         }
 
         private static GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
             LargeLineColor = new Color(.55f,.55f,.55f,1f),
             SmallLineColor = new Color(.3f,.3f,.3f,1f),
-            UnitWidth = 16,
+            UnitWidth = 50,
             LargeWidthRatio = 5,
             UnitHeight = 50
         };
