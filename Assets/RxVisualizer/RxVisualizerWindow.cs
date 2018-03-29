@@ -38,7 +38,8 @@ namespace RxVisualizer{
 			var windowHeight = position.height;
 			var gridRect = new Rect(0, 0, windowWidth, windowHeight);
 			var margRect = GetRectWithMargin(gridRect, 100, 25, 25, 25);
-			Drawer.DrawGrid(margRect);
+			Drawer.SetGridRect(margRect);
+			Drawer.DrawGrid();
 
 			// TODO Добавить порядок для контейнеров
 			int layer = -1;
