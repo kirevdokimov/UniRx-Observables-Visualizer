@@ -30,22 +30,28 @@ public static class GUIGrid{
 
         public int UnitWidth{
             get{ return _uw; }
-            set{ _uw = Mathf.Max(5, value); }
+            set{
+                _uw = Mathf.Max(5, value);
+                LargeUnitWidth = UnitWidth * value;
+            }
         }
 
         public int UnitHeight{
             get{ return _uh; }
-            set{ _uh = Mathf.Max(5, value); }
+            set{
+                _uh = Mathf.Max(5, value);
+                LargeUnitHeight = UnitHeight * value;
+            }
         }
 
         public int LargeUnitWidth{
             get{ return _luw; }
-            set{ _luw = Mathf.Max(5, value); }
+            private set{ _luw = Mathf.Max(5, value); }
         }
 
         public int LargeUnitHeight{
             get{ return _luh; }
-            set{ _luh = Mathf.Max(5, value); }
+            private set{ _luh = Mathf.Max(5, value); }
         }
 
         private int _uw;
