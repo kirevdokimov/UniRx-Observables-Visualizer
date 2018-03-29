@@ -5,7 +5,7 @@ using UnityEngine.Assertions.Comparers;
 
 namespace RxVisualizer{
     public static class Drawer{
-        private static Texture2D point = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/greenCircle.png");
+        private static Texture2D point = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/greenMark.png");
         
         public static Rect gridRect;
 
