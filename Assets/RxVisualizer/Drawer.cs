@@ -26,10 +26,12 @@ namespace RxVisualizer{
             LargeLineColor = new Color(.55f,.55f,.55f,1f),
             SmallLineColor = new Color(.3f,.3f,.3f,1f),
             UnitWidth = 16,
-            LargeWidthRatio = 5
+            LargeWidthRatio = 5,
+            UnitHeight = 50
         };
         
         public static void SetZoom(int value){
+            if (gridConfig.UnitWidth == 0) return;
             var ratio = gridConfig.LargeUnitWidth / gridConfig.UnitWidth;
             gridConfig.UnitWidth = value;
             gridConfig.LargeUnitWidth = ratio * value;

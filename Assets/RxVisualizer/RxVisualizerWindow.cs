@@ -18,7 +18,7 @@ namespace RxVisualizer{
 			
 		}
 
-		public int zoomSlider;
+		public int zoomSlider = 16;
 
 		void OnGUI(){
 
@@ -37,7 +37,7 @@ namespace RxVisualizer{
 			var windowWidth = position.width;
 			var windowHeight = position.height;
 			var gridRect = new Rect(0, 0, windowWidth, windowHeight);
-			var margRect = GetRectWithMargin(gridRect, 100, 0, 0, 0);
+			var margRect = GetRectWithMargin(gridRect, 100, 25, 25, 25);
 			Drawer.DrawGrid(margRect);
 
 			// TODO Добавить порядок для контейнеров
@@ -55,7 +55,8 @@ namespace RxVisualizer{
 		}
 
 		private static Rect GetRectWithMargin(Rect r, int top, int bottom, int left, int right){
-			return new Rect(r.position.x + left, r.position.y + top, r.size.x - left - right, r.size.y - top - bottom);
+			r.Set(r.position.x + left, r.position.y + top, r.size.x - left - right, r.size.y - top - bottom);
+			return r;
 		}
 
 		void OnInspectorUpdate(){
