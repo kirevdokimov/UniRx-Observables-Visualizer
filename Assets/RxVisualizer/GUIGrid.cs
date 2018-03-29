@@ -1,65 +1,43 @@
-﻿using UnityEngine;
+﻿using System.Security.Cryptography.X509Certificates;
+using UnityEngine;
 // runemarkstudio.com/extend-your-unity-editor-with-grid-background/
 // docs.unity3d.com/ScriptReference/GL.html
 public static class GUIGrid{
 
     public struct DrawConfig{
         
+        private const int MinValidValue = 5;
+        
         public Color SmallLineColor;
         public Color LargeLineColor;
 
-        public Vector2Int UnitSize{
-            set{
-                UnitWidth = value.x;
-                UnitHeight = value.y;
-            }
-        }
-        public Vector2Int LargeUnitSize{
-            set{
-                LargeUnitWidth = value.x;
-                LargeUnitHeight = value.y;
-            }
-        }
+        public int UnitWidth;
+        public int UnitHeight;
 
-        public int Subdivisions{
-            set{
-                LargeUnitWidth = UnitWidth * value;
-                LargeUnitHeight = UnitHeight * value;
-            }
-        }
+        public int LargeUnitWidth;
+        public int LargeUnitHeight;
 
-        public int UnitWidth{
-            get{ return _uw; }
-            set{
-                _uw = Mathf.Max(5, value);
-                LargeUnitWidth = UnitWidth * value;
-            }
+        public bool DrawHorizontal{
+            get{ return UnitHeight >= MinValidValue; }
         }
-
-        public int UnitHeight{
-            get{ return _uh; }
-            set{
-                _uh = Mathf.Max(5, value);
-                LargeUnitHeight = UnitHeight * value;
-            }
-        }
-
-        public int LargeUnitWidth{
-            get{ return _luw; }
-            private set{ _luw = Mathf.Max(5, value); }
-        }
-
-        public int LargeUnitHeight{
-            get{ return _luh; }
-            private set{ _luh = Mathf.Max(5, value); }
-        }
-
-        private int _uw;
-        private int _uh;
         
-        private int _luw;
-        private int _luh;
+        public bool DrawVertical{
+            get{ return UnitWidth >= MinValidValue; }
+        }
+        
+        public bool DrawLargeHorizontal{
+            get{ return LargeUnitHeight >= MinValidValue; }
+        }
+        public bool DrawLargeVertical{
+            get{ return LargeUnitWidth >= MinValidValue; }
+        }
 
+        public int LargeWidthRatio{
+            set{ LargeUnitWidth = UnitWidth * value; }
+        }
+        public int LargeHeightRatio{
+            set{ LargeUnitHeight = UnitHeight * value; }
+        }
     }
 
     static Material lineMaterial;
@@ -82,8 +60,9 @@ public static class GUIGrid{
     private static readonly DrawConfig DefaultConfig = new DrawConfig(){
         SmallLineColor = Color.blue,
         LargeLineColor = Color.red,
-        UnitSize = new Vector2Int(5, 5),
-        Subdivisions = 5
+        UnitWidth = 5,
+        UnitHeight = 5,
+        LargeUnitWidth = 10
     };
 
     public static void Draw(Rect rect){
@@ -102,22 +81,30 @@ public static class GUIGrid{
         
         
         
-        // Vertical lines
-        for (var x = 0; x < rect.width; x += config.UnitWidth){
-            GL.Begin(GL.LINES);
-            GL.Color((x % config.LargeUnitWidth == 0) ? config.LargeLineColor : config.SmallLineColor);
-            GL.Vertex3(rect.x + x, rect.y, 0);
-            GL.Vertex3(rect.x + x, rect.y + rect.height, 0);
-            GL.End();
+        if (config.DrawVertical){
+            for (var x = 0; x < rect.width; x += config.UnitWidth){
+                GL.Begin(GL.LINES);
+                if (config.DrawLargeVertical)
+                    GL.Color((x % config.LargeUnitWidth == 0) ? config.LargeLineColor : config.SmallLineColor);
+                else
+                    GL.Color(config.SmallLineColor);
+                GL.Vertex3(rect.x + x, rect.y, 0);
+                GL.Vertex3(rect.x + x, rect.y + rect.height, 0);
+                GL.End();
+            }
         }
 
-        // Horizontal lines
-        for (var y = 0; y < rect.height; y += config.UnitHeight){
-            GL.Begin(GL.LINES);
-            GL.Color((y % config.LargeUnitHeight == 0) ? config.LargeLineColor : config.SmallLineColor);
-            GL.Vertex3(rect.x, rect.y + y, 0);
-            GL.Vertex3(rect.x + rect.width, rect.y + y, 0);
-            GL.End();
+        if (config.DrawHorizontal){
+            for (var y = 0; y < rect.height; y += config.UnitHeight){
+                GL.Begin(GL.LINES);
+                if (config.DrawLargeHorizontal)
+                    GL.Color((y % config.LargeUnitHeight == 0) ? config.LargeLineColor : config.SmallLineColor);
+                else
+                    GL.Color(config.SmallLineColor);
+                GL.Vertex3(rect.x, rect.y + y, 0);
+                GL.Vertex3(rect.x + rect.width, rect.y + y, 0);
+                GL.End();
+            }
         }
 
         GL.PopMatrix();
