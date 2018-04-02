@@ -48,6 +48,8 @@ namespace RxVisualizer{
 			foreach (var container in VisualizerItemHandler.Containers){
 				layer++;
 				var items = container.GetItems();
+				Rect? lastMouseEventRect = null;
+				Item? lastMouseEventItem = null;
 				foreach (var item in items){
 					Rect rect;
 					
@@ -58,10 +60,17 @@ namespace RxVisualizer{
 						rect = Drawer.DrawItem(item, layer,item.data);
 					}
 					
-//					if (rect.Contains(Event.current.mousePosition)){
-//						GUI.Box(new Rect(Event.current.mousePosition,new Vector2(100,50)), "Hello");
-//					}
+					if (rect.Contains(Event.current.mousePosition)){
+						lastMouseEventRect = rect;
+						lastMouseEventItem = item;
+					}
 				}
+
+				if (lastMouseEventRect.HasValue){
+					Drawer.DrawItemBox(lastMouseEventItem.Value,lastMouseEventRect.Value);
+				}
+
+				
 			}
 		}
 

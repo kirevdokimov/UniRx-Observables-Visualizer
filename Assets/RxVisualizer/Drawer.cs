@@ -64,6 +64,11 @@ namespace RxVisualizer{
             return pointRect;
         }
 
+
+        public static void DrawItemBox(Item i, Rect r){
+            GUI.Box(new Rect(r.position,new Vector2(100,50)), "Hello");
+        }
+
         private static GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
             LargeLineColor = new Color(.55f,.55f,.55f,1f),
             SmallLineColor = new Color(.3f,.3f,.3f,1f),
