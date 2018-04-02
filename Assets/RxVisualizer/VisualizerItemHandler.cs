@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace RxVisualizer{
     public static class VisualizerItemHandler{
@@ -15,7 +16,8 @@ namespace RxVisualizer{
             var item = new Item(){
                 data = data,
                 type = Item.Type.next,
-                time = Time.time
+                time = Time.time,
+                markId = Drawer.GetMarkIsForNextEvent()
             };
             
             GetContainer(name).Add(item);
