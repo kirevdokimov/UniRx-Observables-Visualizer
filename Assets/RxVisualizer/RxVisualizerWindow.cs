@@ -55,13 +55,17 @@ namespace RxVisualizer{
 			Drawer.SetGridRect(margRect);
 			Drawer.DrawGrid();
 
+			Rect? lastMouseEventRect = null;
+			Item? lastMouseEventItem = null;
+			
+			
+			
 			// TODO Добавить порядок для контейнеров
 			int layer = -1;
 			foreach (var container in VisualizerItemHandler.Containers){
 				layer++;
 				var items = container.GetItems();
-				Rect? lastMouseEventRect = null;
-				Item? lastMouseEventItem = null;
+				
 				foreach (var item in items){
 					Rect rect;
 					
@@ -77,12 +81,10 @@ namespace RxVisualizer{
 						lastMouseEventItem = item;
 					}
 				}
-
-				if (lastMouseEventRect.HasValue){
-					Drawer.DrawItemBox(lastMouseEventItem.Value,lastMouseEventRect.Value);
-				}
-
-				
+			}
+			
+			if (lastMouseEventRect.HasValue){
+				Drawer.DrawItemBox(lastMouseEventItem.Value,lastMouseEventRect.Value);
 			}
 		}
 

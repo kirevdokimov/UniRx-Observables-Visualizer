@@ -46,7 +46,7 @@ namespace RxVisualizer{
                 default : drawmark = mark[6]; break;
             }
             
-            var origin = gridRect.position;
+            var origin = gridRect.position + Vector2.right*500;
             var layerOffset = 50;
             
             var pointRect = new Rect(
@@ -60,7 +60,20 @@ namespace RxVisualizer{
 
 
         public static void DrawItemBox(Item i, Rect r){
-            GUI.Box(new Rect(r.position,new Vector2(100,50)), "Hello");
+            var boxSize = new Vector2(180,16*2);
+            var boxPosition = new Vector2(
+                r.position.x + r.width / 2 - boxSize.x / 2,
+                r.position.y + r.height*(1.5f));
+            var boxRect = new Rect(boxPosition,boxSize);
+            
+            
+            
+            var content = new GUIContent(string.Format("Value : {0} \n Time : {1}",i.data,i.time));
+
+            var style = GUI.skin.box;
+            style.normal.background = Texture2D.whiteTexture;
+
+            GUI.Box(boxRect, content ,style);
         }
 
         private static GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
