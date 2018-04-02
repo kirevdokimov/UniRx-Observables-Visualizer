@@ -19,14 +19,8 @@ namespace RxVisualizer{
             green = 0, red = 1, blue = 2, orage = 3
         }
 
-        private const int countOfMarksForNextEvent = 4;
-
-        public static int GetMarkIsForNextEvent(){
-            return Random.Range(0, countOfMarksForNextEvent);
-        }
-
-        public static Rect gridRect;
-        public static float widthUnit; // количество расстояния в юнитах для одной секунды времени
+        private static Rect gridRect;
+        private static float widthUnit; // количество расстояния в юнитах для одной секунды времени
 
         public static Rect DrawItem(Item item, int layer, string text){
             var rect = DrawItem(item, layer);

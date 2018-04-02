@@ -11,16 +11,28 @@ namespace RxVisualizer{
 
 	public class RxVisualizerWindow : EditorWindow{
 		
+		private const string EDITORPREF_ZOOM = "RxVisualizerWindow_zoomSlider";
 		private const int startZoom = 50;
 
 		[MenuItem("Window/Rx Visualizer")]
 		private static void Init(){
 			var window = GetWindow<RxVisualizerWindow>();
 			window.Show();
-			Drawer.SetZoom(startZoom);
 		}
 
-		public int zoomSlider = startZoom;
+		private void OnFocus(){
+			Drawer.SetZoom(zoomSlider);
+		}
+
+		private void OnDisable(){
+			EditorPrefs.SetInt(EDITORPREF_ZOOM,zoomSlider);
+		}
+		
+		private void OnEnable(){
+			zoomSlider = EditorPrefs.HasKey(EDITORPREF_ZOOM) ? EditorPrefs.GetInt(EDITORPREF_ZOOM) : startZoom;
+		}
+
+		public int zoomSlider;
 
 		void OnGUI(){
 
