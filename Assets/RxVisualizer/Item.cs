@@ -16,7 +16,7 @@ namespace RxVisualizer{
             next, error, completed
         }
 
-        public int markId;
+        public Drawer.Mark mark;
 
     }
 }

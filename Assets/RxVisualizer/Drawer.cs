@@ -15,6 +15,10 @@ namespace RxVisualizer{
             AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/ohHiMark.png")//6
         };
 
+        public enum Mark{
+            green = 0, red = 1, blue = 2, orage = 3
+        }
+
         private const int countOfMarksForNextEvent = 4;
 
         public static int GetMarkIsForNextEvent(){
@@ -42,7 +46,7 @@ namespace RxVisualizer{
             Texture2D drawmark;
             
             switch (item.type){
-                case Item.Type.next : drawmark = mark[item.markId]; break;
+                case Item.Type.next : drawmark = mark[(int)item.mark]; break;
                 case Item.Type.completed : drawmark = mark[4]; break;
                 case Item.Type.error : drawmark = mark[5]; break;
                 default : drawmark = mark[6]; break;

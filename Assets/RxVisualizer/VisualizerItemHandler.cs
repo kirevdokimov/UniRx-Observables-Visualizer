@@ -12,12 +12,12 @@ namespace RxVisualizer{
             get{ return container.Values; }
         }
 
-        public static void Handle(string name, string data){
+        public static void Handle(string name, string data, Drawer.Mark dmark){
             var item = new Item(){
                 data = data,
                 type = Item.Type.next,
                 time = Time.time,
-                markId = Drawer.GetMarkIsForNextEvent()
+                mark = dmark
             };
             
             GetContainer(name).Add(item);
