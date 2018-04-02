@@ -16,6 +16,7 @@ namespace RxVisualizer{
         };
         
         public static Rect gridRect;
+        public static float widthUnit; // количество расстояния в юнитах для одной секунды времени
 
         public static Rect DrawItem(Item item, int layer, string text){
             var rect = DrawItem(item, layer);
@@ -41,14 +42,11 @@ namespace RxVisualizer{
                 default : drawmark = mark[6]; break;
             }
             
-            //var point = 
             var origin = gridRect.position;
             var layerOffset = 50;
-            // Тут важна зависимость от UnitWidth, чтобы небыло разных мер для отрисовки сетки и отрисовки меток.
-            var unitsPerTime = gridConfig.UnitWidth; // количество расстояния в юнитах для одной секунды времени
             
             var pointRect = new Rect(
-                origin.x + unitsPerTime * item.time - drawmark.width/2,
+                origin.x + widthUnit * item.time - drawmark.width/2,
                 origin.y + layer * layerOffset - drawmark.height/2,
                 drawmark.width,
                 drawmark.height);   
@@ -59,12 +57,13 @@ namespace RxVisualizer{
         private static GUIGrid.DrawConfig gridConfig = new GUIGrid.DrawConfig(){
             LargeLineColor = new Color(.55f,.55f,.55f,1f),
             SmallLineColor = new Color(.3f,.3f,.3f,1f),
-            UnitWidth = 50,
-            LargeWidthRatio = 5,
+            //UnitWidth = 250,
+            //LargeWidthRatio = 1,
             UnitHeight = 50
         };
 
         public static void SetZoom(int value){
+            widthUnit = value;
             if (gridConfig.UnitWidth == 0) return;
             var ratio = gridConfig.LargeUnitWidth / gridConfig.UnitWidth;
             gridConfig.UnitWidth = value;
