@@ -10,15 +10,17 @@ namespace RxVisualizer{
 
 
 	public class RxVisualizerWindow : EditorWindow{
+		
+		private const int startZoom = 50;
 
 		[MenuItem("Window/Rx Visualizer")]
 		private static void Init(){
 			var window = GetWindow<RxVisualizerWindow>();
 			window.Show();
-			
+			Drawer.SetZoom(startZoom);
 		}
 
-		public int zoomSlider = 50;
+		public int zoomSlider = startZoom;
 
 		void OnGUI(){
 
