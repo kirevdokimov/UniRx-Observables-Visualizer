@@ -21,6 +21,8 @@ namespace RxVisualizer{
 
         private static Rect gridRect;
         private static float widthUnit; // количество расстояния в юнитах для одной секунды времени
+        public static float scrollValue;
+        
 
         public static Rect DrawItem(Item item, int layer, string text){
             var rect = DrawItem(item, layer);
@@ -46,7 +48,7 @@ namespace RxVisualizer{
                 default : drawmark = mark[6]; break;
             }
             
-            var origin = gridRect.position + Vector2.right*500;
+            var origin = gridRect.position + Vector2.right*scrollValue;
             var layerOffset = 50;
             
             var pointRect = new Rect(
