@@ -24,8 +24,13 @@ namespace RxVisualizer{
             return defaultMark;
         }
 
-        public void AddRule(Func<T, bool> rule, Drawer.Mark mark){
+        public MarkMapper<T> AddRule(Func<T, bool> rule, Drawer.Mark mark){
             map.Add(rule,mark);
+            return this;
+        }
+
+        public MarkMapper<T> Any(Drawer.Mark mark){
+            return AddRule(i => true, mark);
         }
     }
 }
