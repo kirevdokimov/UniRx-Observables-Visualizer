@@ -2,10 +2,14 @@
 
 namespace RxVisualizer{
     public class ItemContainer : IContainer<Item>{
+
+        private string name;
+        
         private readonly List<Item> items;
 
-        public ItemContainer(){
+        public ItemContainer(string name){
             items = new List<Item>();
+            SetName(name);
         }
 
         public void Add(Item item){
@@ -18,6 +22,14 @@ namespace RxVisualizer{
 
         public void Clear(){
             items.Clear();
+        }
+
+        public void SetName(string value){
+            name = value;
+        }
+
+        public string GetName(){
+            return name;
         }
     }
 }

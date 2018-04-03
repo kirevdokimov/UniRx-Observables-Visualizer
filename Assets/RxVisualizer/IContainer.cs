@@ -5,5 +5,7 @@ namespace RxVisualizer{
         void Add(T item);
         List<T> GetItems();
         void Clear();
+        void SetName(string value);
+        string GetName();
     }
 }

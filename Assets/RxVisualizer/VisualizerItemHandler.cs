@@ -47,7 +47,7 @@ namespace RxVisualizer{
             if (container.ContainsKey(name))
                 return container[name];
 
-            IContainer<Item> cnt = new ItemContainer();
+            IContainer<Item> cnt = new ItemContainer(name);
             container.Add(name,cnt);
             return cnt;
         }

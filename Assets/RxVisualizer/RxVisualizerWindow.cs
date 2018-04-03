@@ -71,8 +71,11 @@ namespace RxVisualizer{
 			int layer = -1;
 			foreach (var container in VisualizerItemHandler.Containers){
 				layer++;
-				var items = container.GetItems();
 				
+				
+				Drawer.DrawLabel(container.GetName(),layer);
+				
+				var items = container.GetItems();
 				foreach (var item in items){
 					Rect rect;
 					

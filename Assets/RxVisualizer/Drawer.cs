@@ -23,6 +23,12 @@ namespace RxVisualizer{
         private static float widthUnit; // количество расстояния в юнитах для одной секунды времени
         public static float scrollValue;
         
+        const float layerOffset = 50;
+
+        public static void DrawLabel(string text, int layer){
+            var origin = gridRect.position + Vector2.up * layer * layerOffset + Vector2.down*16;
+            GUI.Label(new Rect(origin,new Vector2(400,16)), text);
+        }
 
         public static Rect DrawItem(Item item, int layer, string text){
             var rect = DrawItem(item, layer);
@@ -49,7 +55,6 @@ namespace RxVisualizer{
             }
             
             var origin = gridRect.position + Vector2.right*scrollValue;
-            var layerOffset = 50;
             
             var pointRect = new Rect(
                 origin.x + widthUnit * item.time - drawmark.width/2,
