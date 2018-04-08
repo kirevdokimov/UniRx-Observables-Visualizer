@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using Mark = RxVisualizer.Item.Mark;
 
 namespace RxVisualizer{
     public static class VisualizerItemHandler{
@@ -12,10 +13,10 @@ namespace RxVisualizer{
             get{ return container.Values; }
         }
 
-        public static void Handle(string name, string data, Drawer.Mark dmark){
+        public static void Handle(string name, string data, Mark dmark){
             var item = new Item(){
                 data = data,
-                type = Item.Type.next,
+                type = Item.Type.Next,
                 time = Time.time,
                 mark = dmark
             };
@@ -26,7 +27,7 @@ namespace RxVisualizer{
         public static void Handle(string name, Exception ex){
             var item = new Item(){
                 data = ex.Message,
-                type = Item.Type.error,
+                type = Item.Type.Error,
                 time = Time.time
             };
             
@@ -36,7 +37,7 @@ namespace RxVisualizer{
         public static void Handle(string name){
             var item = new Item(){
                 data = "OnCompleted",
-                type = Item.Type.completed,
+                type = Item.Type.Completed,
                 time = Time.time
             };
             
@@ -53,8 +54,8 @@ namespace RxVisualizer{
         }
 
         public static void Clear(){
-            foreach (var container in Containers){
-                container.Clear();
+            foreach (var c in Containers){
+                c.Clear();
             }
         }
 
