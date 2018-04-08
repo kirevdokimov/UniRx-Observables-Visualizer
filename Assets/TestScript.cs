@@ -18,14 +18,20 @@ public class TestScript : MonoBehaviour{
 		beta.Visualize("Beta",new MarkMapper<long>().Any(Item.Mark.Red));
 		gamma.Visualize("Gamma");
 		
-		var customObs = Observable.Create<int>(observer => {
-			observer.OnNext(3);
-			observer.OnNext(2);
-			observer.OnNext(1);
+		var customObs = Observable.Create<char>(observer => {
+			observer.OnNext('A');
+			observer.OnNext('B');
+			observer.OnNext('C');
 			observer.OnCompleted();
 			return Disposable.Empty;
 		});
+		var customObsErr = Observable.Create<char>(observer => {
+			observer.OnNext('A');
+			observer.OnError(new Exception("Kernel panic"));
+			return Disposable.Empty;
+		});
 
-		customObs.Visualize("Custom");
+		customObs.Visualize("CustomSucc");
+		customObsErr.Visualize("CustomErr");
 	}
 }

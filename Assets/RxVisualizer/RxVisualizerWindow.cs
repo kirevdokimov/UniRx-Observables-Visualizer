@@ -69,21 +69,34 @@ namespace RxVisualizer{
 				Drawer.DrawLabel(GridRect.position,layer,container.GetName());
 				
 				var items = container.GetItems();
-				
+				Item previousItem = new Item(){time = -1f};
+				Vector2 previousPosition = Vector2.zero;
 				foreach (var item in items){
 					
 					var itemText = item.data.Length > 4 ? "..." : item.data;
 
 					var itemPosition = ItemDrawer.GetItemPosition(item.time, GridOrigin, layer);
-					// TODO if previous is so close to current -> pack it
 					
-					var rect = ItemDrawer.DrawItemWithText(item, itemPosition, itemText);
+					if (Mathf.Abs(previousItem.time - item.time) < 0.01f){
+						itemPosition = previousPosition + Vector2.down * 5 + Vector2.right * 5;
+						Debug.Log("Shift item "+item.data);
+					}
+					previousItem = item;
+					previousPosition = itemPosition;
+
+					Rect rect;
+					if(item.type  == Item.Type.Next)
+						rect = ItemDrawer.DrawItemWithText(item, itemPosition, itemText);
+					else{
+						rect = ItemDrawer.DrawItem(item, itemPosition);
+					}
 
 					// Мышь может касаться сразу нескольких item'ов, поэтому мы запоминаем только последний
 					if (rect.Contains(Event.current.mousePosition)){
 						lastMouseEventRect = rect;
 						lastMouseEventItem = item;
 					}
+
 				}
 			}
 			

@@ -9,9 +9,8 @@ namespace RxVisualizer{
             AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/redMark.png"),//1
             AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/blueMark.png"),//2
             AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/orangeMark.png"),//3
-            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/completedMark.png"),//4
-            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/errorMark.png"),//5
-            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/ohHiMark.png")//6
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/checkmark.png"),//4
+            AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Resources/cross.png"),//5
         };
         // Расстояние в пикселях, для одной секунды пройденного времени с начала отсчета 
         public static int WidthUnit{ private get; set; }
@@ -30,7 +29,16 @@ namespace RxVisualizer{
             var rect = GetCenteredRectForTexture(position, texture); 
             
             GUI.DrawTexture(rect,texture);
-            
+
+            switch (item.type){
+                case Item.Type.Completed:
+                    GUI.DrawTexture(rect,mark[4]);
+                    break;
+                case Item.Type.Error:
+                    GUI.DrawTexture(rect,mark[5]);
+                    break;
+            }
+
             return rect;
         }
 
@@ -40,12 +48,13 @@ namespace RxVisualizer{
         }
 
         private static Texture2D GetTextureForItem(Item item){
-            switch (item.type){
-                case Item.Type.Next : return mark[(int)item.mark];
-                case Item.Type.Completed : return mark[4];
-                case Item.Type.Error : return mark[5];
-                default : return mark[6];
-            }
+            return mark[(int) item.mark];
+//            switch (item.type){
+//                case Item.Type.Next : return mark[(int)item.mark];
+//                case Item.Type.Completed : return mark[4];
+//                case Item.Type.Error : return mark[5];
+//                default : return mark[6];
+//            }
         }
         
         private static Rect GetCenteredRectForTexture(Vector2 position, Texture texture){

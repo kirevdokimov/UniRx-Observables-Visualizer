@@ -28,7 +28,8 @@ namespace RxVisualizer{
             var item = new Item(){
                 data = ex.Message,
                 type = Item.Type.Error,
-                time = Time.time
+                time = Time.time,
+                mark = Mark.Red
             };
             
             GetContainer(name).Add(item);
