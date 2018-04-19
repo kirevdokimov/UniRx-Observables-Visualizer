@@ -10,31 +10,39 @@ namespace RxVisualizer{
 	public class RxVisualizerWindow : EditorWindow{
 		
 		private const string EDITORPREF_ZOOM = "RxVisualizerWindow_zoomSlider";
-		private const string EDITORPREF_SCROLL = "RxVisualizerWindow_scrollValue";
+		private const string EDITORPREF_ORIGIN_X = "RxVisualizerWindow_origin_x";
+		private const string EDITORPREF_ORIGIN_Y = "RxVisualizerWindow_origin_y";
 		private const int startZoom = 50;
 		
 		public int zoomSlider;
-		public float gridScrollValue;
-		private Rect GridRect{ get; set; }
 
-		private Vector2 GridOrigin{
-			get{ return GridRect.position + Vector2.right * gridScrollValue; }
-		}
+		private const float DistanceBetweenLines = 50f;
+
+		private Vector2 _start;
+		private Vector2 _shift;
+
+		private Vector2 Origin = Vector2.right * 50f + Vector2.down * 150;
 
 		[MenuItem("Window/Rx Visualizer")]
 		private static void Init(){
 			var window = GetWindow<RxVisualizerWindow>();
 			window.Show();
+			
 		}
 		
 		void OnGUI(){
 
 			DrawLayout();
+
+			Drawer.DrawLines(
+				countOfLines: VisualizerItemHandler.CountOfContainers(),
+				width: position.width,
+				yAxisShift: Origin.y,
+				distanceBetweenLines: DistanceBetweenLines);
 			
 			DrawItems();
 			
 			HandleMouseDrag();
-
 		}
 
 		private void DrawLayout(){
@@ -43,19 +51,15 @@ namespace RxVisualizer{
 				zoomSlider = EditorGUILayout.IntSlider("Zoom", zoomSlider, 5, 50);
 			}
 			if (EditorGUI.EndChangeCheck()){
-				Drawer.SetZoom(zoomSlider);
 				ItemDrawer.WidthUnit = zoomSlider;
 			}
 
 			if (GUILayout.Button("Clear")){
 				VisualizerItemHandler.Clear();
 			}
-
-			var windowRect = new Rect(Vector2.zero, position.size);
-			GridRect = GetRectWithMargin(windowRect, 100, 25, 25, 25);
-			
-			Drawer.DrawGrid(GridRect);
 		}
+
+		
 
 		private void DrawItems(){
 			
@@ -66,8 +70,10 @@ namespace RxVisualizer{
 			foreach (var container in VisualizerItemHandler.Containers){
 				
 				layer++;
+
+				var labelPosition = Vector2.up * (Origin.y + DistanceBetweenLines * layer) + Vector2.right * (25f);
 				
-				Drawer.DrawLabel(GridRect.position,layer,container.GetName());
+				Drawer.DrawLabel(labelPosition,container.GetName());
 				
 				var items = container.GetItems();
 				Item previousItem = new Item(){time = -1f};
@@ -76,11 +82,11 @@ namespace RxVisualizer{
 					
 					var itemText = item.data.Length > 4 ? "..." : item.data;
 
-					var itemPosition = ItemDrawer.GetItemPosition(item.time, GridOrigin, layer);
+					var itemPosition = ItemDrawer.GetItemPosition(item.time, Origin, layer);
 					
 					if (Mathf.Abs(previousItem.time - item.time) < 0.01f){
 						itemPosition = previousPosition + Vector2.down * 5 + Vector2.right * 5;
-						Debug.Log("Shift item "+item.data);
+						//Debug.Log("Shift item "+item.data);
 					}
 					previousItem = item;
 					previousPosition = itemPosition;
@@ -111,7 +117,7 @@ namespace RxVisualizer{
 
 		void HandleMouseDrag(){
 			if (Event.current.type != EventType.MouseDrag) return;
-			gridScrollValue += Event.current.delta.x;
+			Origin += Event.current.delta;
 			Event.current.Use();
 			Repaint();
 		}
@@ -128,13 +134,15 @@ namespace RxVisualizer{
 		}
 		
 		private void OnFocus(){
-			Drawer.SetZoom(zoomSlider);
 			ItemDrawer.WidthUnit = zoomSlider;
-			gridScrollValue = EditorPrefs.GetFloat(EDITORPREF_SCROLL, 0);
+			var x = EditorPrefs.GetFloat(EDITORPREF_ORIGIN_X, 0);
+			var y = EditorPrefs.GetFloat(EDITORPREF_ORIGIN_Y, 0);
+			Origin = new Vector2(x,y);
 		}
 
 		private void OnLostFocus(){
-			EditorPrefs.SetFloat(EDITORPREF_SCROLL,gridScrollValue);
+			EditorPrefs.SetFloat(EDITORPREF_ORIGIN_X,Origin.x);
+			EditorPrefs.SetFloat(EDITORPREF_ORIGIN_Y,Origin.y);
 		}
 
 		private void OnDisable(){
@@ -143,6 +151,7 @@ namespace RxVisualizer{
 		
 		private void OnEnable(){
 			zoomSlider = EditorPrefs.GetInt(EDITORPREF_ZOOM, startZoom);
+			
 		}
 		
 		#endregion

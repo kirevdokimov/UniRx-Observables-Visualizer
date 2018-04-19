@@ -10,6 +10,10 @@ namespace RxVisualizer{
         
         private static readonly Dictionary<string, IContainer<Item>> container = new Dictionary<string, IContainer<Item>>();
 
+        public static int CountOfContainers(){
+            return container.Count;
+        }
+
         public static IEnumerable<IContainer<Item>> Containers{
             get{ return container.Values; }
         }
