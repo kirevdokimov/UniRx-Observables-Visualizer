@@ -9,18 +9,15 @@ namespace RxVisualizer{
 
 	public class RxVisualizerWindow : EditorWindow{
 		
-		private const string EDITORPREF_ZOOM = "RxVisualizerWindow_zoomSlider";
-		private const string EDITORPREF_ORIGIN_X = "RxVisualizerWindow_origin_x";
-		private const string EDITORPREF_ORIGIN_Y = "RxVisualizerWindow_origin_y";
+		private const string EditorprefZoom = "RxVisualizerWindow_zoomSlider";
+		private const string EditorprefOriginX = "RxVisualizerWindow_origin_x";
+		private const string EditorprefOriginY = "RxVisualizerWindow_origin_y";
 		private static Vector2 DefaultOrigin{ get{ return Vector2.right * 50f + Vector2.up * 150f; } }
-		private const int startZoom = 50;
+		private const int StartZoom = 50;
 		
-		public int zoomSlider;
+		public int ZoomSlider;
 
 		private const float DistanceBetweenLines = 50f;
-
-		private Vector2 _start;
-		private Vector2 _shift;
 
 		private static Vector2 _origin = DefaultOrigin;
 
@@ -30,8 +27,8 @@ namespace RxVisualizer{
 			window.Show();
 			
 		}
-		
-		void OnGUI(){
+
+		private void OnGUI(){
 
 			DrawLayout();
 
@@ -49,33 +46,31 @@ namespace RxVisualizer{
 		private void DrawLayout(){
 			EditorGUI.BeginChangeCheck();
 			{
-				zoomSlider = EditorGUILayout.IntSlider("Zoom", zoomSlider, 5, 50);
+				ZoomSlider = EditorGUILayout.IntSlider("Zoom", ZoomSlider, 5, 50);
 			}
 			if (EditorGUI.EndChangeCheck()){
-				ItemDrawer.WidthUnit = zoomSlider;
+				ItemDrawer.WidthUnit = ZoomSlider;
 			}
 
 			if (GUILayout.Button("Clear")){
 				Revert();
 			}
 		}
-
+		
+		/// Revert state to initial
 		private static void Revert(){
 			VisualizerItemHandler.Clear();
 			_origin = DefaultOrigin;
-			Debug.Log("Reverted : "+_origin);
 		}
 
-
-
-		private void DrawItems(){
-			
+		private static void DrawItems(){	
 			Rect? lastMouseEventRect = null;
 			Item? lastMouseEventItem = null;
-			// TODO Добавить порядок для контейнеров
+			
+			// TODO Add containers ordering
 			int layer = -1;
-			foreach (var container in VisualizerItemHandler.Containers){
-				
+			
+			foreach (var container in VisualizerItemHandler.Containers){	
 				layer++;
 
 				var labelPosition = Vector2.up * (_origin.y + DistanceBetweenLines * layer) + Vector2.right * (25f);
@@ -83,33 +78,30 @@ namespace RxVisualizer{
 				Drawer.DrawLabel(labelPosition,container.GetName());
 				
 				var items = container.GetItems();
-				Item previousItem = new Item(){time = -1f};
-				Vector2 previousPosition = Vector2.zero;
+				var previousItem = new Item(){time = -1f};
+				var previousPosition = Vector2.zero;
 				foreach (var item in items){
-					
+					//Truncate data representation
 					var itemText = item.data.Length > 4 ? "..." : item.data;
 
 					var itemPosition = ItemDrawer.GetItemPosition(item.time, _origin, layer);
 					
+					// Stack items if it's close enough
 					if (Mathf.Abs(previousItem.time - item.time) < 0.01f){
 						itemPosition = previousPosition + Vector2.down * 5 + Vector2.right * 5;
-						//Debug.Log("Shift item "+item.data);
 					}
+					
 					previousItem = item;
 					previousPosition = itemPosition;
 
-					Rect rect;
-					if(item.type  == Item.Type.Next)
-						rect = ItemDrawer.DrawItemWithText(item, itemPosition, itemText);
-					else{
-						rect = ItemDrawer.DrawItem(item, itemPosition);
-					}
+					var rect = item.type == Item.Type.Next
+						? ItemDrawer.DrawItemWithText(item, itemPosition, itemText)
+						: ItemDrawer.DrawItem(item, itemPosition);
 
-					// Мышь может касаться сразу нескольких item'ов, поэтому мы запоминаем только последний
-					if (rect.Contains(Event.current.mousePosition)){
-						lastMouseEventRect = rect;
-						lastMouseEventItem = item;
-					}
+					// Mouse can touch a lot of items at once, so we keep in mind only last (overlaid) item
+					if (!rect.Contains(Event.current.mousePosition)) continue;
+					lastMouseEventRect = rect;
+					lastMouseEventItem = item;
 
 				}
 			}
@@ -122,52 +114,50 @@ namespace RxVisualizer{
 			}
 		}
 
-		void HandleMouseDrag(){
+		private void HandleMouseDrag(){
 			if (Event.current.type != EventType.MouseDrag) return;
 			_origin += Event.current.delta;
 			Event.current.Use();
 			Repaint();
 		}
 		
-		private static Rect GetRectWithMargin(Rect r, int top, int bottom, int left, int right){
-			r.Set(r.position.x + left, r.position.y + top, r.size.x - left - right, r.size.y - top - bottom);
-			return r;
-		}
-		
 		#region Life Cycle 
 
-		void OnInspectorUpdate(){
+		private void OnInspectorUpdate(){
 			Repaint();
 		}
 		
 		private void OnFocus(){
-			ItemDrawer.WidthUnit = zoomSlider;
-			var x = EditorPrefs.GetFloat(EDITORPREF_ORIGIN_X, 0);
-			var y = EditorPrefs.GetFloat(EDITORPREF_ORIGIN_Y, 0);
+			ItemDrawer.WidthUnit = ZoomSlider;
+			var x = EditorPrefs.GetFloat(EditorprefOriginX, DefaultOrigin.x);
+			var y = EditorPrefs.GetFloat(EditorprefOriginY, DefaultOrigin.y);
 			_origin = new Vector2(x,y);
 		}
 
 		private void OnLostFocus(){
-			EditorPrefs.SetFloat(EDITORPREF_ORIGIN_X,_origin.x);
-			EditorPrefs.SetFloat(EDITORPREF_ORIGIN_Y,_origin.y);
+			EditorPrefs.SetFloat(EditorprefOriginX,_origin.x);
+			EditorPrefs.SetFloat(EditorprefOriginY,_origin.y);
 		}
 
 		private void OnDisable(){
-			EditorPrefs.SetInt(EDITORPREF_ZOOM,zoomSlider);
+			EditorPrefs.SetInt(EditorprefZoom,ZoomSlider);
+			EditorApplication.playModeStateChanged -= _onEnteredToPlayMode;
 		}
 		
 		private void OnEnable(){
-			zoomSlider = EditorPrefs.GetInt(EDITORPREF_ZOOM, startZoom);
-			EditorApplication.playModeStateChanged += _onPlayModeEntered;
+			ZoomSlider = EditorPrefs.GetInt(EditorprefZoom, StartZoom);
+			EditorApplication.playModeStateChanged -= _onEnteredToPlayMode; // for sure
+			EditorApplication.playModeStateChanged += _onEnteredToPlayMode;
 		}
-
-		private readonly Action<PlayModeStateChange> _onPlayModeEntered = change => {
-			if (change == PlayModeStateChange.EnteredPlayMode){
-				Revert();
-			}
-		};
-
+		
 		#endregion
+		
+		/// Clear window when entering to play mode
+		private readonly Action<PlayModeStateChange> _onEnteredToPlayMode = change => {
+			if (change != PlayModeStateChange.EnteredPlayMode) return;
+			
+			Revert();
+		};
 
 	}
 }
