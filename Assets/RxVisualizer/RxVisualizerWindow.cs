@@ -12,6 +12,7 @@ namespace RxVisualizer{
 		private const string EDITORPREF_ZOOM = "RxVisualizerWindow_zoomSlider";
 		private const string EDITORPREF_ORIGIN_X = "RxVisualizerWindow_origin_x";
 		private const string EDITORPREF_ORIGIN_Y = "RxVisualizerWindow_origin_y";
+		private static Vector2 DefaultOrigin{ get{ return Vector2.right * 50f + Vector2.up * 150f; } }
 		private const int startZoom = 50;
 		
 		public int zoomSlider;
@@ -21,7 +22,7 @@ namespace RxVisualizer{
 		private Vector2 _start;
 		private Vector2 _shift;
 
-		private Vector2 Origin = Vector2.right * 50f + Vector2.down * 150;
+		private static Vector2 _origin = DefaultOrigin;
 
 		[MenuItem("Window/Rx Visualizer")]
 		private static void Init(){
@@ -37,7 +38,7 @@ namespace RxVisualizer{
 			Drawer.DrawLines(
 				countOfLines: VisualizerItemHandler.CountOfContainers(),
 				width: position.width,
-				yAxisShift: Origin.y,
+				yAxisShift: _origin.y,
 				distanceBetweenLines: DistanceBetweenLines);
 			
 			DrawItems();
@@ -55,11 +56,17 @@ namespace RxVisualizer{
 			}
 
 			if (GUILayout.Button("Clear")){
-				VisualizerItemHandler.Clear();
+				Revert();
 			}
 		}
 
-		
+		private static void Revert(){
+			VisualizerItemHandler.Clear();
+			_origin = DefaultOrigin;
+			Debug.Log("Reverted : "+_origin);
+		}
+
+
 
 		private void DrawItems(){
 			
@@ -71,7 +78,7 @@ namespace RxVisualizer{
 				
 				layer++;
 
-				var labelPosition = Vector2.up * (Origin.y + DistanceBetweenLines * layer) + Vector2.right * (25f);
+				var labelPosition = Vector2.up * (_origin.y + DistanceBetweenLines * layer) + Vector2.right * (25f);
 				
 				Drawer.DrawLabel(labelPosition,container.GetName());
 				
@@ -82,7 +89,7 @@ namespace RxVisualizer{
 					
 					var itemText = item.data.Length > 4 ? "..." : item.data;
 
-					var itemPosition = ItemDrawer.GetItemPosition(item.time, Origin, layer);
+					var itemPosition = ItemDrawer.GetItemPosition(item.time, _origin, layer);
 					
 					if (Mathf.Abs(previousItem.time - item.time) < 0.01f){
 						itemPosition = previousPosition + Vector2.down * 5 + Vector2.right * 5;
@@ -117,7 +124,7 @@ namespace RxVisualizer{
 
 		void HandleMouseDrag(){
 			if (Event.current.type != EventType.MouseDrag) return;
-			Origin += Event.current.delta;
+			_origin += Event.current.delta;
 			Event.current.Use();
 			Repaint();
 		}
@@ -137,12 +144,12 @@ namespace RxVisualizer{
 			ItemDrawer.WidthUnit = zoomSlider;
 			var x = EditorPrefs.GetFloat(EDITORPREF_ORIGIN_X, 0);
 			var y = EditorPrefs.GetFloat(EDITORPREF_ORIGIN_Y, 0);
-			Origin = new Vector2(x,y);
+			_origin = new Vector2(x,y);
 		}
 
 		private void OnLostFocus(){
-			EditorPrefs.SetFloat(EDITORPREF_ORIGIN_X,Origin.x);
-			EditorPrefs.SetFloat(EDITORPREF_ORIGIN_Y,Origin.y);
+			EditorPrefs.SetFloat(EDITORPREF_ORIGIN_X,_origin.x);
+			EditorPrefs.SetFloat(EDITORPREF_ORIGIN_Y,_origin.y);
 		}
 
 		private void OnDisable(){
@@ -151,9 +158,15 @@ namespace RxVisualizer{
 		
 		private void OnEnable(){
 			zoomSlider = EditorPrefs.GetInt(EDITORPREF_ZOOM, startZoom);
-			
+			EditorApplication.playModeStateChanged += _onPlayModeEntered;
 		}
-		
+
+		private readonly Action<PlayModeStateChange> _onPlayModeEntered = change => {
+			if (change == PlayModeStateChange.EnteredPlayMode){
+				Revert();
+			}
+		};
+
 		#endregion
 
 	}

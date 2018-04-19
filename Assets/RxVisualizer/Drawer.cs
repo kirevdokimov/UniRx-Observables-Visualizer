@@ -17,7 +17,7 @@ namespace RxVisualizer{
         public static void DrawLines(int countOfLines, float width, float yAxisShift, float distanceBetweenLines){
             if (width <= 1) return;
             if (countOfLines < 1) return;
-            if (distanceBetweenLines * countOfLines < yAxisShift) return;
+            //if (distanceBetweenLines * countOfLines < yAxisShift) return;
         
             GLLine.PixelMatrixScope(() => {
             
