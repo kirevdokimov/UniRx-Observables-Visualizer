@@ -155,8 +155,8 @@ namespace RxVisualizer{
 		/// Clear window when entering to play mode
 		private readonly Action<PlayModeStateChange> _onEnteredToPlayMode = change => {
 			if (change != PlayModeStateChange.EnteredPlayMode) return;
-			
-			Revert();
+			// TODO It works a litle bit slow, so sometimes it's clear fresh data from playmode
+			//Revert();
 		};
 
 	}
