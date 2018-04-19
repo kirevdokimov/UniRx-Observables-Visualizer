@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using Mark = RxVisualizer.Item.Mark;
@@ -58,6 +59,8 @@ namespace RxVisualizer{
             foreach (var c in Containers){
                 c.Clear();
             }
+
+            container.Clear();
         }
 
     }

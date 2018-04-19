@@ -64,6 +64,7 @@ namespace RxVisualizer{
 			// TODO Добавить порядок для контейнеров
 			int layer = -1;
 			foreach (var container in VisualizerItemHandler.Containers){
+				
 				layer++;
 				
 				Drawer.DrawLabel(GridRect.position,layer,container.GetName());
