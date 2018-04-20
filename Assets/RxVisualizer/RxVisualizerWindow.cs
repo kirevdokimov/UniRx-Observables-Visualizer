@@ -32,13 +32,19 @@ namespace RxVisualizer{
 
 			DrawLayout();
 
+			var noLayoutRect = new Rect(0, 50, position.width, position.height - 50);
+			
+			GUILayout.BeginArea(noLayoutRect);
+
 			Drawer.DrawLines(
+				rect: noLayoutRect,
 				countOfLines: VisualizerItemHandler.CountOfContainers(),
-				width: position.width,
 				yAxisShift: _origin.y,
 				distanceBetweenLines: DistanceBetweenLines);
 			
 			DrawItems();
+			
+			GUILayout.EndArea();
 			
 			HandleMouseDrag();
 		}

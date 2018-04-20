@@ -14,15 +14,17 @@ namespace RxVisualizer{
         private static readonly Color LineColor = new Color(.3f, .3f, .3f, 1f);
 
         
-        public static void DrawLines(int countOfLines, float width, float yAxisShift, float distanceBetweenLines){
-            if (width <= 1) return;
+        public static void DrawLines(Rect rect,int countOfLines, float yAxisShift, float distanceBetweenLines){
+            if (rect.width <= 1) return;
             if (countOfLines < 1) return;
         
             GLLine.PixelMatrixScope(() => {
             
                 for (var i = 0; i < countOfLines; i++){
                     var y = yAxisShift + distanceBetweenLines * i;
-                    GLLine.Draw(0, y, width, y, LineColor);
+                    if(y+rect.y > rect.yMax) continue;
+                    if(rect.yMin > y+rect.y) continue;
+                    GLLine.Draw(0, y, rect.width, y, LineColor);
                 }
             });
         }
