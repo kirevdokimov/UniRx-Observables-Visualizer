@@ -12,7 +12,7 @@ namespace RxVisualizer{
 		private const string EditorprefZoom = "RxVisualizerWindow_zoomSlider";
 		private const string EditorprefOriginX = "RxVisualizerWindow_origin_x";
 		private const string EditorprefOriginY = "RxVisualizerWindow_origin_y";
-		private static Vector2 DefaultOrigin{ get{ return Vector2.right * 50f + Vector2.up * 150f; } }
+		private static Vector2 DefaultOrigin{ get{ return Vector2.right * 200f + Vector2.up * 150f; } }
 		private const int StartZoom = 50;
 		
 		public int ZoomSlider;
@@ -141,22 +141,21 @@ namespace RxVisualizer{
 
 		private void OnDisable(){
 			EditorPrefs.SetInt(EditorprefZoom,ZoomSlider);
-			EditorApplication.playModeStateChanged -= _onEnteredToPlayMode;
+			EditorApplication.playModeStateChanged -= _onActionBeforeEnteringPlaymode;
 		}
 		
 		private void OnEnable(){
 			ZoomSlider = EditorPrefs.GetInt(EditorprefZoom, StartZoom);
-			EditorApplication.playModeStateChanged -= _onEnteredToPlayMode; // for sure
-			EditorApplication.playModeStateChanged += _onEnteredToPlayMode;
+			EditorApplication.playModeStateChanged -= _onActionBeforeEnteringPlaymode; // for sure
+			EditorApplication.playModeStateChanged += _onActionBeforeEnteringPlaymode;
 		}
 		
 		#endregion
 		
 		/// Clear window when entering to play mode
-		private readonly Action<PlayModeStateChange> _onEnteredToPlayMode = change => {
-			if (change != PlayModeStateChange.EnteredPlayMode) return;
-			// TODO It works a litle bit slow, so sometimes it's clear fresh data from playmode
-			//Revert();
+		private readonly Action<PlayModeStateChange> _onActionBeforeEnteringPlaymode = change => {
+			if (change != PlayModeStateChange.ExitingEditMode) return;
+			Revert();
 		};
 
 	}
